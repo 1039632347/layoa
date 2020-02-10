@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.situ.layoa.Util.DAOUtils;
+import com.situ.layoa.commons.LayResult;
 import com.situ.layoa.role.dao.RoleDao;
 import com.situ.layoa.role.domain.Role;
 import com.situ.layoa.role.service.RoleService;
@@ -24,10 +26,10 @@ public class RoleServiceImol  implements Serializable,RoleService {
 	 @Autowired
 		private RoleDao roleDao;
 	@Override
-	public Role getName(String roleName) {
+	public Integer getName(String roleName) {
+	    Role role =	roleDao.get(roleName);
 	
-		
-		return roleDao.get(roleName);
+		return role!=null? 0 : 1;
 	}
 	@Override
 	public Long save(Role role) {
@@ -36,15 +38,8 @@ public class RoleServiceImol  implements Serializable,RoleService {
 		role.setCreateDate(new Date());
 		return roleDao.save(role);
 	}
-	@Override
-	public List<Role> finAllRole() {
-		return roleDao.findAll();
-	}
-	@Override
-	public Integer getCount() {
-		
-		return roleDao.getCount();
-	}
+	
+	
 	@Override
 	public Long doDeleteRole(Long rowId) {
 		return roleDao.delete(rowId);
@@ -58,6 +53,17 @@ public class RoleServiceImol  implements Serializable,RoleService {
 		role.setUpdateBy("admin");
 		role.setUpdateDate(new Date());
 		return roleDao.update(role);
+	}
+	@Override
+	public LayResult finAllRole(Integer page, Integer limit, Role searchRole) {
+		
+		Role searchParam = DAOUtils.buildSearchParam(searchRole);
+		
+		Integer dataCount = roleDao.getCount(searchParam);
+		
+		List<Role> roleList = roleDao.findByPage(DAOUtils.buildPagination(page, limit),searchParam);
+
+		return new LayResult(0,"",dataCount,roleList) ;
 	}
 
 }

@@ -23,8 +23,40 @@
 	</select>
 	<select id="getCount" resultType="java.lang.Integer">
 		SELECT COUNT(ROW_ID) FROM TB_ROLE WHERE ACTIVE_FLAG =1
-		
+		<!-- 引入多条件查询的语句 -->
+		<include refid="search_fragement" />
 	</select>
+	<!-- 多条件查询的SQL语句 -->
+	<sql id="search_fragement">
+		<if test="searchParam!=null">
+			<if test="searchParam.rowId!=null">
+				AND ROW_ID = #{searchParam.rowId}
+			</if>
+			<if test="searchParam.roleCode!=null">
+				AND ROLE_CODE = #{searchParam.roleCode}
+			</if>
+			<if test="searchParam.roleName!=null">
+				AND ROLE_NAME = #{searchParam.roleName}
+			</if>
+			<if test="searchParam.roleKind!=null">
+				AND ROLE_KIND = #{searchParam.roleKind}
+			</if>
+			<if test="searchParam.roleInfo!=null">
+				AND ROLE_INFO = #{searchParam.roleInfo}
+			</if>
+			<if test="searchParam.activeFlag!=null">
+				AND ACTIVE_FLAG = #{searchParam.activeFlag}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="findByPage" resultType="Role">
+		<include refid="role_base_select"/>
+		<!-- 引入多条件查询的语句 -->
+		<include refid="search_fragement" />
+		 LIMIT #{pagination.firstResult},#{pagination.maxResults}
+	</select>
+	
 	<update id="delete">
 		UPDATE TB_ROLE SET ACTIVE_FLAG = 0 WHERE ROW_ID = #{rowId}
 	</update>

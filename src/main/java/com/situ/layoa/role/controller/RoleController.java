@@ -50,26 +50,16 @@ public class RoleController  implements Serializable {
 	@GetMapping("/checkname")
 	public Integer checkusername(String roleName) {
 	
-	  Role	role =roleService.getName(roleName);
-		Integer result=1;
-	String roleName1 =	role.getRoleName();
-		if(roleName1!=null) {
-			result=0;
-		}
-		return result;
+		return  roleService.getName(roleName);
+		
 	}
 	
 
 	@GetMapping("/{page}/{limit}")
-	public LayResult findAllRole(@PathVariable("page")Integer page,@PathVariable("limit") Integer Limit) {
+	public LayResult findAllRole(@PathVariable Integer page,@PathVariable  Integer limit ,Role searchRole) {
 		
-		List<Role> rolelist =  roleService.finAllRole();
-		
-		Integer count = roleService.getCount();
-		
-		return new LayResult(0,"",count,rolelist);
-	
-	}
+		return  roleService.finAllRole(page,limit,searchRole);
+}
 	
 	@GetMapping("/goadd")
 	public ModelAndView goadd(ModelAndView modelAndView) {
@@ -86,10 +76,8 @@ public class RoleController  implements Serializable {
 	
 	
 	@GetMapping("/{rowId}")
-	   public ModelAndView goUpdate(@PathVariable("rowId") Long rowId,ModelAndView modelAndView) {		
-			modelAndView.addObject("role", roleService.findRoleById(rowId));
-			modelAndView.setViewName(ROLE_ADD);
-			return modelAndView;
+	   public Role goUpdate(@PathVariable("rowId") Long rowId) {		
+	    	return roleService.findRoleById(rowId);	
 		}
 	
 	@PutMapping
